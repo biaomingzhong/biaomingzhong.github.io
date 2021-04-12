@@ -1,0 +1,314 @@
+<!DOCTYPE html><html class="theme-next gemini use-motion" lang="zh-Hans"><head><meta name="generator" content="Hexo 3.9.0"><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"><meta name="theme-color" content="#222"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><link href="//cdn.jsdelivr.net/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet" type="text/css"><link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css"><link href="//cdn.jsdelivr.net/fontawesome/4.6.2/css/font-awesome.min.css" rel="stylesheet" type="text/css"><link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css"><link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png?v=5.1.4"><link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png?v=5.1.4"><link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png?v=5.1.4"><link rel="mask-icon" href="/favicon/safari-pinned-tab.svg?v=5.1.4" color="#222"><meta name="keywords" content="Android,Framework,"><link rel="alternate" href="/atom.xml" title="蜗牛buff" type="application/atom+xml"><meta name="description" content="Android 是构建在 Linux 基础之上的，下图所示为 Android 系统的主要分层架构。"><meta name="keywords" content="Android,Framework"><meta property="og:type" content="article"><meta property="og:title" content="Android Framework 笔记01 - Android 系统架构概览"><meta property="og:url" content="https://biaomingzhong.github.io/2020/android-framework-01-base-overview/index.html"><meta property="og:site_name" content="蜗牛buff"><meta property="og:description" content="Android 是构建在 Linux 基础之上的，下图所示为 Android 系统的主要分层架构。"><meta property="og:locale" content="zh-Hans"><meta property="og:image" content="https://biaomingzhong.github.io/2020/android-framework-01-base-overview/android-stack_2x.jpg"><meta property="og:updated_time" content="2021-04-12T07:08:59.929Z"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="Android Framework 笔记01 - Android 系统架构概览"><meta name="twitter:description" content="Android 是构建在 Linux 基础之上的，下图所示为 Android 系统的主要分层架构。"><meta name="twitter:image" content="https://biaomingzhong.github.io/2020/android-framework-01-base-overview/android-stack_2x.jpg"><script type="text/javascript" id="hexo.configurations">var NexT=window.NexT||{},CONFIG={root:"/",scheme:"Gemini",version:"5.1.4",sidebar:{position:"left",display:"post",offset:12,b2t:!1,scrollpercent:!1,onmobile:!1},fancybox:!0,tabs:!0,motion:{enable:!0,async:!1,transition:{post_block:"fadeIn",post_header:"slideDownIn",post_body:"slideDownIn",coll_header:"slideLeftIn",sidebar:"slideUpIn"}},duoshuo:{userId:"0",author:"博主"},algolia:{applicationID:"",apiKey:"",indexName:"",hits:{per_page:10},labels:{input_placeholder:"搜索",hits_empty:"未发现与 「${query}」相关的内容",hits_stats:"${hits} 条相关条目，使用了 ${time} 毫秒"}}}</script><link rel="canonical" href="https://biaomingzhong.github.io/2020/android-framework-01-base-overview/"><title>Android Framework 笔记01 - Android 系统架构概览 | 蜗牛buff</title><script type="text/javascript">var _hmt=_hmt||[];!function(){var e=document.createElement("script");e.src="https://hm.baidu.com/hm.js?7e435066d6516effcd8c4a91258a3539";var t=document.getElementsByTagName("script")[0];t.parentNode.insertBefore(e,t)}()</script></head><body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans"><div class="container sidebar-position-left page-post-detail"><div class="headband"></div><header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="header-inner"><div class="site-brand-wrapper"><div class="site-meta"><div class="custom-logo-site-title"><a href="/" class="brand" rel="start"><span class="logo-line-before"><i></i></span> <span class="site-title">蜗牛buff</span> <span class="logo-line-after"><i></i></span></a></div><h1 class="site-subtitle" itemprop="description">Android & 前端开发，坚持输出</h1></div><div class="site-nav-toggle"><button><span class="btn-bar"></span> <span class="btn-bar"></span> <span class="btn-bar"></span></button></div></div><nav class="site-nav"><ul id="menu" class="menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i><br>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i><br>归档</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i><br>标签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i><br>关于</a></li><li class="menu-item menu-item-search"><a href="javascript:;" class="popup-trigger"><i class="menu-item-icon fa fa-search fa-fw"></i><br>搜索</a></li></ul><div class="site-search"><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class="search-icon"><i class="fa fa-search"></i> </span><span class="popup-btn-close"><i class="fa fa-times-circle"></i></span><div class="local-search-input-wrapper"><input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input"></div></div><div id="local-search-result"></div></div></div></nav></div></header><main id="main" class="main"><div class="main-inner"><div class="content-wrap"><div id="content" class="content"><div id="posts" class="posts-expand"><article class="post post-type-normal" itemscope itemtype="http://schema.org/Article"><div class="post-block"><link itemprop="mainEntityOfPage" href="https://biaomingzhong.github.io/2020/android-framework-01-base-overview/"><span hidden itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="name" content="biaomingzhong"><meta itemprop="description" content="蜗牛buff，欢迎交流"><meta itemprop="image" content="/uploads/avatar2.jpg"></span><span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="蜗牛buff"></span><header class="post-header"><h2 class="post-title" itemprop="name headline">Android Framework 笔记01 - Android 系统架构概览</h2><div class="post-meta"><span class="post-time"><span class="post-meta-item-icon"><i class="fa fa-calendar-o"></i> </span><span class="post-meta-item-text">发表于</span> <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-02-15T11:39:18+08:00">2020-02-15 </time></span><span class="post-category"><span class="post-meta-divider">|</span> <span class="post-meta-item-icon"><i class="fa fa-folder-o"></i> </span><span class="post-meta-item-text">分类于</span> <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Android/" itemprop="url" rel="index"><span itemprop="name">Android</span> </a></span></span><span id="/2020/android-framework-01-base-overview/" class="leancloud_visitors" data-flag-title="Android Framework 笔记01 - Android 系统架构概览"><span class="post-meta-divider">|</span> <span class="post-meta-item-icon"><i class="fa fa-eye"></i> </span><span class="post-meta-item-text">阅读次数&#58;</span> <span class="leancloud-visitors-count"></span></span></div></header><div class="post-body" itemprop="articleBody"><p>Android 是构建在 Linux 基础之上的，下图所示为 Android 系统的主要分层架构。</p><a id="more"></a> <img src="/2020/android-framework-01-base-overview/android-stack_2x.jpg"><h2 id="Linux-内核层-Linux-kernel"><a href="#Linux-内核层-Linux-kernel" class="headerlink" title="Linux 内核层 (Linux kernel)"></a>Linux 内核层 (Linux kernel)</h2><p>Android 的核心系统服务基于 Linux 内核，再次基础上添加了部分 Android 专用的驱动。这些驱动通常与硬件无关，而是为了上层软件服务的，他们包括以下内容：</p><ul><li>Binder 进程间通讯（IPC）基础设施</li><li>Ashmem 匿名共享内存</li><li>lowermemorykiller 进场回收模块</li><li>logger 日志相关</li><li>wakelock 电源管理相关</li><li>Alarm 闹钟相关，为 AlarmManager 服务</li></ul><h2 id="硬件抽象层（HAL）"><a href="#硬件抽象层（HAL）" class="headerlink" title="硬件抽象层（HAL）"></a>硬件抽象层（HAL）</h2><p>硬件抽象层，该层为硬件厂商定义了一套标准接口。有了这套标准接口之后，可以在不影响上层的情况下，调整内部实现。当框架 API 要求访问设备硬件时，Android 系统将为该硬件组件加载库模块。</p><p>硬件抽象层是位于操作系统内核与硬件电路之间的接口层，其目的在于将硬件抽象化，为了保护硬件厂商的知识产权，它隐藏了特定平台的硬件接口细节，为操作系统虚拟硬件平台，使其具有硬件无关性，可在多种平台上进行移植。从软硬件测试的角度来看，都可以分别基于硬件抽象层来完成，使得软硬件测试工作的并行进行成功可能。通俗来讲，就是将控制硬件的动作放在硬件抽象层中。</p><h2 id="系统运行库层-Android-Runtime-和-Native-C-C-Libraries"><a href="#系统运行库层-Android-Runtime-和-Native-C-C-Libraries" class="headerlink" title="系统运行库层 (Android Runtime 和 Native C/C++ Libraries)"></a>系统运行库层 (Android Runtime 和 Native C/C++ Libraries)</h2><p>系统运行库层分为两部分，分别是 C/C++ 程序库和 Android 运行时库，下面分别进行介绍。</p><h3 id="1）C-C-程序库"><a href="#1）C-C-程序库" class="headerlink" title="1）C/C++ 程序库"></a>1）C/C++ 程序库</h3><p>C/C++ 程序库能被 Android 系统中的不同组件所使用，并通过应用框架层为开发者提供服务，主要的 C/C++ 程序库如下：</p><ul><li>OpenGL ES: 3D 绘图库</li><li>Libc: 从 BSD 继承来的标准 C 系统函数库，专门为基于嵌入式 Linux 的设备定制</li><li>Media Framework: 多媒体库，支持多种常用的音频、视频格式录制和回放</li><li>SQLite: 轻型的关系型数据库引擎</li><li>SGL: 底层的 2G 图形渲染引擎</li><li>SSL: 安全套接层，是一种为网络通信提供安全及数据完整性的安全协议</li><li>FreeType: 可移植的字体引擎，它提供统一的接口来访问多种字体格式文件</li></ul><h3 id="2）Android-运行时库"><a href="#2）Android-运行时库" class="headerlink" title="2）Android 运行时库"></a>2）Android 运行时库</h3><p>运行时库又分为核心库 (Core Libraries) 和 ART (Android 系统 5.0 之后，Dalvik 虚拟机被 ART 取代)。</p><p>核心库提供了 Java 语言核心库的大多数功能，这样开发者可以使用 Java 语言来编写 Android 应用。</p><p>与 JVM 相比，Dalvik 虚拟机 (DVM) 是专门为移动设备定制的，允许在有限内存中同时运行多个虚拟机的实例，并且每一个 Dalvik 应用被作为一个独立的 Linux 进程执行。而且独立的进程可以防止在虚拟机崩溃的时候所有程序被关闭。</p><p>替代 DVM 的 ART 的机制与 DVM 又有不同，DVM 中的应用每次运行时，字节码都需要通过即时编译器 (Just In Time, JIT) 转换为机器码，这会使得应用运行效率降低。而在 ART 中，系统在安装应用时会进行一次预编译 (Ahead Of Time, AOT) 将字节码预先编译成机器码并存储在本地，这样应用每一次运行的时候就不需要执行编译了，这样应用的运行效率也得到了大大的提高。</p><h2 id="应用框架层-Java-API-Framework"><a href="#应用框架层-Java-API-Framework" class="headerlink" title="应用框架层 (Java API Framework)"></a>应用框架层 (Java API Framework)</h2><p>Framework 层这一层包含了一系列重要的系统服务。对于 App 层的管理及 App 使用的 API 基本上都是在这一层提供的。这里面包含的服务很多，例如：</p><ul><li>AMS (ActivityManagerService): 包含所有应用组件的管理以及 App 进程管理</li><li>WMS (WindowManagerService): 负责窗口管理</li><li>PMS (PackageManagerService): 负责 APK 包的管理（安装、卸载、更新等）</li><li>NMS (NotificationManagerService): 负责通知管理</li><li>PMS (PowerManagerService): 电源管理</li><li>LMS (LocationManagerService): 定位相关</li><li>……</li></ul><h2 id="应用层-System-Apps"><a href="#应用层-System-Apps" class="headerlink" title="应用层 (System Apps)"></a>应用层 (System Apps)</h2><p>系统内置的应用程序与非系统级的应用程序都属于应用层，负责与用户进行直接交互，通常都是用 Java 进行开发的。</p></div><div><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong> biaomingzhong</li><li class="post-copyright-link"><strong>本文链接：</strong> <a href="https://biaomingzhong.github.io/2020/android-framework-01-base-overview/" title="Android Framework 笔记01 - Android 系统架构概览">https://biaomingzhong.github.io/2020/android-framework-01-base-overview/</a></li><li class="post-copyright-license"><strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！</li></ul></div><footer class="post-footer"><div class="post-tags"><a href="/tags/Android/" rel="tag"># Android</a> <a href="/tags/Framework/" rel="tag"># Framework</a></div><div class="post-nav"><div class="post-nav-next post-nav-item"><a href="/2018/android-restore-state-optimize/" rel="next" title="Android 内存重启优化"><i class="fa fa-chevron-left"></i> Android 内存重启优化</a></div><span class="post-nav-divider"></span><div class="post-nav-prev post-nav-item"><a href="/2020/android-framework-02-base-init-process/" rel="prev" title="Android Framework 笔记02 - init 进程启动过程">Android Framework 笔记02 - init 进程启动过程 <i class="fa fa-chevron-right"></i></a></div></div></footer></div></article><div class="post-spread"></div></div></div></div><div class="sidebar-toggle"><div class="sidebar-toggle-line-wrap"><span class="sidebar-toggle-line sidebar-toggle-line-first"></span> <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span> <span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id="sidebar" class="sidebar"><div class="sidebar-inner"><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">文章目录</li><li class="sidebar-nav-overview" data-target="site-overview-wrap">站点概览</li></ul><section class="site-overview-wrap sidebar-panel"><div class="site-overview"><div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person"><img class="site-author-image" itemprop="image" src="/uploads/avatar2.jpg" alt="biaomingzhong"><p class="site-author-name" itemprop="name">biaomingzhong</p><p class="site-description motion-element" itemprop="description">蜗牛buff，欢迎交流</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href="/archives/"><span class="site-state-item-count">12</span> <span class="site-state-item-name">日志</span></a></div><div class="site-state-item site-state-categories"><a href="/categories/index.html"><span class="site-state-item-count">2</span> <span class="site-state-item-name">分类</span></a></div><div class="site-state-item site-state-tags"><a href="/tags/index.html"><span class="site-state-item-count">16</span> <span class="site-state-item-name">标签</span></a></div></nav><div class="feed-link motion-element"><a href="/atom.xml" rel="alternate"><i class="fa fa-rss"></i> RSS</a></div><div class="links-of-author motion-element"><span class="links-of-author-item"><a href="https://github.com/biaomingzhong" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i>GitHub</a> </span><span class="links-of-author-item"><a href="mailto:biaomingzhong@gmail.com" target="_blank" title="E-Mail"><i class="fa fa-fw fa-envelope"></i>E-Mail</a></span></div></div></section><section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active"><div class="post-toc"><div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux-内核层-Linux-kernel"><span class="nav-number">1.</span> <span class="nav-text">Linux 内核层 (Linux kernel)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#硬件抽象层（HAL）"><span class="nav-number">2.</span> <span class="nav-text">硬件抽象层（HAL）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#系统运行库层-Android-Runtime-和-Native-C-C-Libraries"><span class="nav-number">3.</span> <span class="nav-text">系统运行库层 (Android Runtime 和 Native C/C++ Libraries)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1）C-C-程序库"><span class="nav-number">3.1.</span> <span class="nav-text">1）C/C++ 程序库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2）Android-运行时库"><span class="nav-number">3.2.</span> <span class="nav-text">2）Android 运行时库</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#应用框架层-Java-API-Framework"><span class="nav-number">4.</span> <span class="nav-text">应用框架层 (Java API Framework)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#应用层-System-Apps"><span class="nav-number">5.</span> <span class="nav-text">应用层 (System Apps)</span></a></li></ol></div></div></section></div></aside></div></main><footer id="footer" class="footer"><div class="footer-inner"><div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2021</span> <span class="with-love"><i class="fa fa-user"></i> </span><span class="author" itemprop="copyrightHolder">biaomingzhong</span></div><div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div><span class="post-meta-divider">|</span><div class="theme-info"><a class="theme-link" target="_blank" href="https://beian.miit.gov.cn">粤ICP备2021045928号</a></div></div></footer><div class="back-to-top"><i class="fa fa-arrow-up"></i></div></div><script type="text/javascript">"[object Function]"!==Object.prototype.toString.call(window.Promise)&&(window.Promise=null)</script><script type="text/javascript" src="//cdn.jsdelivr.net/jquery/2.1.3/jquery.min.js"></script><script type="text/javascript" src="//cdn.jsdelivr.net/fastclick/1.0.6/fastclick.min.js"></script><script type="text/javascript" src="//cdn.jsdelivr.net/npm/jquery-lazyload@1.9.7/jquery.lazyload.min.js"></script><script type="text/javascript" src="//cdn.jsdelivr.net/velocity/1.2.1/velocity.min.js"></script><script type="text/javascript" src="//cdn.jsdelivr.net/velocity/1.2.1/velocity.ui.min.js"></script><script type="text/javascript" src="//cdn.jsdelivr.net/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script><script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script><script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script><script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script><script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script><script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script><script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script><script type="text/javascript">// Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "content.json";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });</script><script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script><script>AV.initialize("lwzyNHXlLXvtMk8pyiT1pR6E-gzGzoHsz","xPcQzNx0Vfs3XQkfHv4v4abc")</script><script>function showTime(e){var t=new AV.Query(e),c=[],u=$(".leancloud_visitors");u.each(function(){c.push($(this).attr("id").trim())}),t.containedIn("url",c),t.find().done(function(e){var t=".leancloud-visitors-count";if(0!==e.length){for(var n=0;n<e.length;n++){var o=e[n],i=o.get("url"),s=o.get("time"),r=document.getElementById(i);$(r).find(t).text(s)}for(n=0;n<c.length;n++){i=c[n],r=document.getElementById(i);var l=$(r).find(t);""==l.text()&&l.text(0)}}else u.find(t).text(0)}).fail(function(e,t){console.log("Error: "+t.code+" "+t.message)})}function addCount(i){var e=$(".leancloud_visitors"),s=e.attr("id").trim(),r=e.attr("data-flag-title").trim(),t=new AV.Query(i);t.equalTo("url",s),t.find({success:function(e){if(0<e.length){var t=e[0];t.fetchWhenSave(!0),t.increment("time"),t.save(null,{success:function(e){$(document.getElementById(s)).find(".leancloud-visitors-count").text(e.get("time"))},error:function(e,t){console.log("Failed to save Visitor num, with error message: "+t.message)}})}else{var n=new i,o=new AV.ACL;o.setPublicReadAccess(!0),o.setPublicWriteAccess(!0),n.setACL(o),n.set("title",r),n.set("url",s),n.set("time",1),n.save(null,{success:function(e){$(document.getElementById(s)).find(".leancloud-visitors-count").text(e.get("time"))},error:function(e,t){console.log("Failed to create")}})}},error:function(e){console.log("Error:"+e.code+" "+e.message)}})}$(function(){var e=AV.Object.extend("Counter");1==$(".leancloud_visitors").length?addCount(e):1<$(".post-title-link").length&&showTime(e)})</script><script>!function(){var t=document.createElement("script"),e=window.location.protocol.split(":")[0];t.src="https"===e?"https://zz.bdstatic.com/linksubmit/push.js":"http://push.zhanzhang.baidu.com/push.js";var s=document.getElementsByTagName("script")[0];s.parentNode.insertBefore(t,s)}()</script></body></html>

@@ -1,0 +1,314 @@
+<!DOCTYPE html><html class="theme-next gemini use-motion" lang="zh-Hans"><head><meta name="generator" content="Hexo 3.9.0"><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"><meta name="theme-color" content="#222"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><link href="//cdn.jsdelivr.net/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet" type="text/css"><link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css"><link href="//cdn.jsdelivr.net/fontawesome/4.6.2/css/font-awesome.min.css" rel="stylesheet" type="text/css"><link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css"><link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png?v=5.1.4"><link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png?v=5.1.4"><link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png?v=5.1.4"><link rel="mask-icon" href="/favicon/safari-pinned-tab.svg?v=5.1.4" color="#222"><meta name="keywords" content="Android-Studio,ConstraintLayout,"><link rel="alternate" href="/atom.xml" title="蜗牛buff" type="application/atom+xml"><meta name="description" content="原文：Constraintlayout basics create constraints作者：Mark Allison什么是约束（Constraints）ConstraintLayout 的核心基础就是创建约束。约束定义了布局内两个组件之间的关系，从而控制组件的布局位置。对于刚接触 ConstraintLayout 但对 RelativeLayout 熟悉的开发者来说，约束布局的工作原理很像 R"><meta name="keywords" content="Android-Studio,ConstraintLayout"><meta property="og:type" content="article"><meta property="og:title" content="[译] ConstraintLayout基础系列之约束（constraints）"><meta property="og:url" content="https://biaomingzhong.github.io/2017/constraintlayout-basics-constraints-1/index.html"><meta property="og:site_name" content="蜗牛buff"><meta property="og:description" content="原文：Constraintlayout basics create constraints作者：Mark Allison什么是约束（Constraints）ConstraintLayout 的核心基础就是创建约束。约束定义了布局内两个组件之间的关系，从而控制组件的布局位置。对于刚接触 ConstraintLayout 但对 RelativeLayout 熟悉的开发者来说，约束布局的工作原理很像 R"><meta property="og:locale" content="zh-Hans"><meta property="og:image" content="https://biaomingzhong.github.io/2017/constraintlayout-basics-constraints-1/blueprint.png"><meta property="og:image" content="https://biaomingzhong.github.io/2017/constraintlayout-basics-constraints-1/anchor_points.png"><meta property="og:image" content="https://biaomingzhong.github.io/2017/constraintlayout-basics-constraints-1/baseline.png"><meta property="og:image" content="https://biaomingzhong.github.io/2017/constraintlayout-basics-constraints-1/create_constraint.gif"><meta property="og:image" content="https://biaomingzhong.github.io/2017/constraintlayout-basics-constraints-1/unidirectional.png"><meta property="og:image" content="https://biaomingzhong.github.io/2017/constraintlayout-basics-constraints-1/create_parent_constraint.gif"><meta property="og:image" content="https://biaomingzhong.github.io/2017/constraintlayout-basics-constraints-1/delete_constraint.gif"><meta property="og:updated_time" content="2021-04-12T07:08:59.944Z"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="[译] ConstraintLayout基础系列之约束（constraints）"><meta name="twitter:description" content="原文：Constraintlayout basics create constraints作者：Mark Allison什么是约束（Constraints）ConstraintLayout 的核心基础就是创建约束。约束定义了布局内两个组件之间的关系，从而控制组件的布局位置。对于刚接触 ConstraintLayout 但对 RelativeLayout 熟悉的开发者来说，约束布局的工作原理很像 R"><meta name="twitter:image" content="https://biaomingzhong.github.io/2017/constraintlayout-basics-constraints-1/blueprint.png"><script type="text/javascript" id="hexo.configurations">var NexT=window.NexT||{},CONFIG={root:"/",scheme:"Gemini",version:"5.1.4",sidebar:{position:"left",display:"post",offset:12,b2t:!1,scrollpercent:!1,onmobile:!1},fancybox:!0,tabs:!0,motion:{enable:!0,async:!1,transition:{post_block:"fadeIn",post_header:"slideDownIn",post_body:"slideDownIn",coll_header:"slideLeftIn",sidebar:"slideUpIn"}},duoshuo:{userId:"0",author:"博主"},algolia:{applicationID:"",apiKey:"",indexName:"",hits:{per_page:10},labels:{input_placeholder:"搜索",hits_empty:"未发现与 「${query}」相关的内容",hits_stats:"${hits} 条相关条目，使用了 ${time} 毫秒"}}}</script><link rel="canonical" href="https://biaomingzhong.github.io/2017/constraintlayout-basics-constraints-1/"><title>[译] ConstraintLayout基础系列之约束（constraints） | 蜗牛buff</title><script type="text/javascript">var _hmt=_hmt||[];!function(){var e=document.createElement("script");e.src="https://hm.baidu.com/hm.js?7e435066d6516effcd8c4a91258a3539";var t=document.getElementsByTagName("script")[0];t.parentNode.insertBefore(e,t)}()</script></head><body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans"><div class="container sidebar-position-left page-post-detail"><div class="headband"></div><header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="header-inner"><div class="site-brand-wrapper"><div class="site-meta"><div class="custom-logo-site-title"><a href="/" class="brand" rel="start"><span class="logo-line-before"><i></i></span> <span class="site-title">蜗牛buff</span> <span class="logo-line-after"><i></i></span></a></div><h1 class="site-subtitle" itemprop="description">Android & 前端开发，坚持输出</h1></div><div class="site-nav-toggle"><button><span class="btn-bar"></span> <span class="btn-bar"></span> <span class="btn-bar"></span></button></div></div><nav class="site-nav"><ul id="menu" class="menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i><br>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i><br>归档</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i><br>标签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i><br>关于</a></li><li class="menu-item menu-item-search"><a href="javascript:;" class="popup-trigger"><i class="menu-item-icon fa fa-search fa-fw"></i><br>搜索</a></li></ul><div class="site-search"><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class="search-icon"><i class="fa fa-search"></i> </span><span class="popup-btn-close"><i class="fa fa-times-circle"></i></span><div class="local-search-input-wrapper"><input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input"></div></div><div id="local-search-result"></div></div></div></nav></div></header><main id="main" class="main"><div class="main-inner"><div class="content-wrap"><div id="content" class="content"><div id="posts" class="posts-expand"><article class="post post-type-normal" itemscope itemtype="http://schema.org/Article"><div class="post-block"><link itemprop="mainEntityOfPage" href="https://biaomingzhong.github.io/2017/constraintlayout-basics-constraints-1/"><span hidden itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="name" content="biaomingzhong"><meta itemprop="description" content="蜗牛buff，欢迎交流"><meta itemprop="image" content="/uploads/avatar2.jpg"></span><span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="蜗牛buff"></span><header class="post-header"><h2 class="post-title" itemprop="name headline">[译] ConstraintLayout基础系列之约束（constraints）</h2><div class="post-meta"><span class="post-time"><span class="post-meta-item-icon"><i class="fa fa-calendar-o"></i> </span><span class="post-meta-item-text">发表于</span> <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-22T15:45:39+08:00">2017-05-22 </time></span><span class="post-category"><span class="post-meta-divider">|</span> <span class="post-meta-item-icon"><i class="fa fa-folder-o"></i> </span><span class="post-meta-item-text">分类于</span> <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Android/" itemprop="url" rel="index"><span itemprop="name">Android</span> </a></span></span><span id="/2017/constraintlayout-basics-constraints-1/" class="leancloud_visitors" data-flag-title="[译] ConstraintLayout基础系列之约束（constraints）"><span class="post-meta-divider">|</span> <span class="post-meta-item-icon"><i class="fa fa-eye"></i> </span><span class="post-meta-item-text">阅读次数&#58;</span> <span class="leancloud-visitors-count"></span></span></div></header><div class="post-body" itemprop="articleBody"><p>原文：<a href="https://constraintlayout.github.io/basics/create_constraint.html" target="_blank" rel="noopener">Constraintlayout basics create constraints</a><br>作者：<a href="https://github.com/StylingAndroid" target="_blank" rel="noopener">Mark Allison</a></p><hr><h2 id="什么是约束（Constraints）"><a href="#什么是约束（Constraints）" class="headerlink" title="什么是约束（Constraints）"></a>什么是约束（Constraints）</h2><p><code>ConstraintLayout</code> 的核心基础就是创建约束。约束定义了布局内两个组件之间的关系，从而控制组件的布局位置。对于刚接触 <code>ConstraintLayout</code> 但对 <code>RelativeLayout</code> 熟悉的开发者来说，约束布局的工作原理很像 <code>RelativeLayout</code> 中通过创建组件间关系来控制布局。</p><a id="more"></a><h2 id="在-Android-Studio-编辑器中创建约束"><a href="#在-Android-Studio-编辑器中创建约束" class="headerlink" title="在 Android Studio 编辑器中创建约束"></a>在 Android Studio 编辑器中创建约束</h2><p>最容易创建约束布局的方式是通过 Android Studio 中的 <code>design</code> 可视化布局编辑器。本文章的例子都通过蓝图 <code>Blueprint</code> 视图来查看展示，我们先简单看看在 <code>Blueprint</code> 视图中的 <code>TextView</code> 。</p><img src="/2017/constraintlayout-basics-constraints-1/blueprint.png"><p>清晰地可以看到 <code>TextView</code> 组件，以及两个箭头符号表示在这个 <code>TextView</code> 组件上存在约束将它对齐到父组件 <code>ConstraintLayout</code> 的左边缘和上边缘。待会再来看它们是如何创建的，还可以看到存在 16dp 的外边距让父组件 <code>ConstraintLayout</code> 和 <code>TextView</code> 的组件边缘之间保留了一些间隙。选择 <code>TextView</code> 组件就会看到如下的缩放和约束锚点。</p><img src="/2017/constraintlayout-basics-constraints-1/anchor_points.png"><p>边角上的小正方形是缩放的控制点，通过拖拉这些点就可以对 <code>TextView</code> 进行缩放。但是这个大多数情况并不是很适用，因为使用这种方式进行缩放后的组件将保持固定的尺寸，而我们往往更需要 <code>TextView</code> 根据具体情况响应式大小。</p><p>每条边中间的锚点就是约束锚点，我们就是用这个锚点来创建约束的。其中左边和上边的锚点里面有蓝点表示这个锚点已经存在了一个约束，相对的右边和下边的空心锚点则表示没有约束。从这个例子，我们就可以看到 <code>TextView</code> 的布局位置就通过定义约束来对齐了父组件。</p><p>任何继承了 <code>TextView</code> 的子组件都拥有另一个锚点：被称为基线（baseline）。这就允许我们通过该锚点来调整组件内的文字对齐基线。选择 <code>TextView</code> 后出现下方按钮，点击其中的 <code>ab</code> 按钮来显示这个锚点。</p><img src="/2017/constraintlayout-basics-constraints-1/baseline.png"><p>在 <code>TextView</code> 上出现香肠状的控制锚点就是基线约束锚点。我们可以通过给这个锚点添加约束就像下面提到给四个边的约束锚点添加约束一样。</p><p>另一个出现的下方按钮中是取消约束按钮（按钮中存在 ‘x’ ），点击将移除该组件上的所有约束。</p><p>创建锚点，我们只需要简单的从一个组件的锚点，拖动指向到另一个组件 <code>View</code> 的锚点。此处的例子，我们创建另一个 <code>TextView</code> （id 为 <code>textView2</code> ,原来的那个 id 是 <code>textview</code>），而且 <code>textView2</code> 已有一个对齐父组件左边的约束，我们再创建一个约束，从 <code>textView2</code> 的上边到 <code>textview</code> 的下边。而这个约束就会让 <code>textView2</code> 对齐到 <code>textview</code> 正下方，如下所示：</p><img src="/2017/constraintlayout-basics-constraints-1/create_constraint.gif"><p>在此处还要注意，我们创建的约束是从 <code>textView2</code> 的上边到 <code>textView</code> 的下边，当我们选择这两个组件的时候，我们只会看到 <code>textView2</code> 的上边约束锚点存在约束，而 <code>textView</code> 的下边约束锚点是空心的不存在约束。</p><img src="/2017/constraintlayout-basics-constraints-1/unidirectional.png"><p>这样的原因是约束是单向的（除非我们谈论的约束是链接 chains ），所以这里例子创建的约束是属于 <code>textView2</code> 的，影响的也是 <code>textView2</code> 的布局位置是相对于 <code>textView</code> 的。因为该约束是只属于 <code>textView2</code> 的，反过来不会影响 <code>textView</code> 的布局位置</p><p>上面讲到的是同级组件间创建约束，而对于一个组件要创建相对于父组件的约束，则只是简单的将约束拖的方向到合适的父组件边缘即可，如下：</p><img src="/2017/constraintlayout-basics-constraints-1/create_parent_constraint.gif"><h2 id="在-XML-中创建约束"><a href="#在-XML-中创建约束" class="headerlink" title="在 XML 中创建约束"></a>在 XML 中创建约束</h2><p>对于想了解在可视化布局下真正的存储的是如何的开发者，以下就是 上面例子的 XML 源码：</p><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">android.support.constraint.ConstraintLayout</span></span></span><br><span class="line"><span class="tag">  <span class="attr">xmlns:android</span>=<span class="string">"http://schemas.android.com/apk/res/android"</span></span></span><br><span class="line"><span class="tag">  <span class="attr">xmlns:app</span>=<span class="string">"http://schemas.android.com/apk/res-auto"</span></span></span><br><span class="line"><span class="tag">  <span class="attr">xmlns:tools</span>=<span class="string">"http://schemas.android.com/tools"</span></span></span><br><span class="line"><span class="tag">  <span class="attr">android:layout_width</span>=<span class="string">"match_parent"</span></span></span><br><span class="line"><span class="tag">  <span class="attr">android:layout_height</span>=<span class="string">"match_parent"</span></span></span><br><span class="line"><span class="tag">  <span class="attr">tools:context</span>=<span class="string">".MainActivity"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">TextView</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:id</span>=<span class="string">"@+id/textView"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_width</span>=<span class="string">"wrap_content"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_height</span>=<span class="string">"wrap_content"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_marginStart</span>=<span class="string">"16dp"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_marginTop</span>=<span class="string">"16dp"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">app:layout_constraintLeft_toLeftOf</span>=<span class="string">"parent"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">app:layout_constraintTop_toTopOf</span>=<span class="string">"parent"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">tools:text</span>=<span class="string">"TextView"</span> /&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">TextView</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:id</span>=<span class="string">"@+id/textView2"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_width</span>=<span class="string">"wrap_content"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_height</span>=<span class="string">"wrap_content"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_marginStart</span>=<span class="string">"16dp"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_marginTop</span>=<span class="string">"8dp"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">app:layout_constraintLeft_toLeftOf</span>=<span class="string">"parent"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">app:layout_constraintTop_toBottomOf</span>=<span class="string">"@+id/textView"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">tools:text</span>=<span class="string">"TextView"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">android.support.constraint.ConstraintLayout</span>&gt;</span></span><br></pre></td></tr></table></figure><p>代码中的约束都是以 <code>app:layout_constraint</code> 开头的属性。我们可以看到 <code>ConstraintLayout</code> 中所有子组件都存在这些属性。让他们对齐父组件的边缘。你还可以看到 <code>textView2</code> 定义了一个约束声明了该组件的上边相对对齐到 <code>textview</code> 的下边。</p><p>值得一提的是，这些属性设置都是使用的 <code>app</code> 命名空间因为 <code>ConstraintLayout</code> 是像 <code>Support libraries</code> 也是作为库引入。它属于你的命名空间 <code>app</code> 而不是属于安卓框架（使用命名空间 <code>android</code> ）。</p><h2 id="删除约束"><a href="#删除约束" class="headerlink" title="删除约束"></a>删除约束</h2><p>上面提到我们可以通过选中组件后出现的清空按钮来清除所有的约束。最后，我们还要介绍的是只删除其中一个约束。如果在 XML 源码中可以直接去掉相应的属性。若使用的是可视化编辑器，则通过点击约束锚点来去除约束条件。</p><img src="/2017/constraintlayout-basics-constraints-1/delete_constraint.gif"></div><div><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong> biaomingzhong</li><li class="post-copyright-link"><strong>本文链接：</strong> <a href="https://biaomingzhong.github.io/2017/constraintlayout-basics-constraints-1/" title="[译] ConstraintLayout基础系列之约束（constraints）">https://biaomingzhong.github.io/2017/constraintlayout-basics-constraints-1/</a></li><li class="post-copyright-license"><strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！</li></ul></div><footer class="post-footer"><div class="post-tags"><a href="/tags/Android-Studio/" rel="tag"># Android-Studio</a> <a href="/tags/ConstraintLayout/" rel="tag"># ConstraintLayout</a></div><div class="post-nav"><div class="post-nav-next post-nav-item"><a href="/2017/web-image-performence-in-action-1/" rel="next" title="Web 图片性能优化系列一：背景与基础"><i class="fa fa-chevron-left"></i> Web 图片性能优化系列一：背景与基础</a></div><span class="post-nav-divider"></span><div class="post-nav-prev post-nav-item"><a href="/2017/constraintlayout-basics-chains-2/" rel="prev" title="[译] ConstraintLayout基础系列之Chains链">[译] ConstraintLayout基础系列之Chains链 <i class="fa fa-chevron-right"></i></a></div></div></footer></div></article><div class="post-spread"></div></div></div></div><div class="sidebar-toggle"><div class="sidebar-toggle-line-wrap"><span class="sidebar-toggle-line sidebar-toggle-line-first"></span> <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span> <span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id="sidebar" class="sidebar"><div class="sidebar-inner"><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">文章目录</li><li class="sidebar-nav-overview" data-target="site-overview-wrap">站点概览</li></ul><section class="site-overview-wrap sidebar-panel"><div class="site-overview"><div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person"><img class="site-author-image" itemprop="image" src="/uploads/avatar2.jpg" alt="biaomingzhong"><p class="site-author-name" itemprop="name">biaomingzhong</p><p class="site-description motion-element" itemprop="description">蜗牛buff，欢迎交流</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href="/archives/"><span class="site-state-item-count">12</span> <span class="site-state-item-name">日志</span></a></div><div class="site-state-item site-state-categories"><a href="/categories/index.html"><span class="site-state-item-count">2</span> <span class="site-state-item-name">分类</span></a></div><div class="site-state-item site-state-tags"><a href="/tags/index.html"><span class="site-state-item-count">16</span> <span class="site-state-item-name">标签</span></a></div></nav><div class="feed-link motion-element"><a href="/atom.xml" rel="alternate"><i class="fa fa-rss"></i> RSS</a></div><div class="links-of-author motion-element"><span class="links-of-author-item"><a href="https://github.com/biaomingzhong" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i>GitHub</a> </span><span class="links-of-author-item"><a href="mailto:biaomingzhong@gmail.com" target="_blank" title="E-Mail"><i class="fa fa-fw fa-envelope"></i>E-Mail</a></span></div></div></section><section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active"><div class="post-toc"><div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是约束（Constraints）"><span class="nav-number">1.</span> <span class="nav-text">什么是约束（Constraints）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#在-Android-Studio-编辑器中创建约束"><span class="nav-number">2.</span> <span class="nav-text">在 Android Studio 编辑器中创建约束</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#在-XML-中创建约束"><span class="nav-number">3.</span> <span class="nav-text">在 XML 中创建约束</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#删除约束"><span class="nav-number">4.</span> <span class="nav-text">删除约束</span></a></li></ol></div></div></section></div></aside></div></main><footer id="footer" class="footer"><div class="footer-inner"><div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2021</span> <span class="with-love"><i class="fa fa-user"></i> </span><span class="author" itemprop="copyrightHolder">biaomingzhong</span></div><div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div><span class="post-meta-divider">|</span><div class="theme-info"><a class="theme-link" target="_blank" href="https://beian.miit.gov.cn">粤ICP备2021045928号</a></div></div></footer><div class="back-to-top"><i class="fa fa-arrow-up"></i></div></div><script type="text/javascript">"[object Function]"!==Object.prototype.toString.call(window.Promise)&&(window.Promise=null)</script><script type="text/javascript" src="//cdn.jsdelivr.net/jquery/2.1.3/jquery.min.js"></script><script type="text/javascript" src="//cdn.jsdelivr.net/fastclick/1.0.6/fastclick.min.js"></script><script type="text/javascript" src="//cdn.jsdelivr.net/npm/jquery-lazyload@1.9.7/jquery.lazyload.min.js"></script><script type="text/javascript" src="//cdn.jsdelivr.net/velocity/1.2.1/velocity.min.js"></script><script type="text/javascript" src="//cdn.jsdelivr.net/velocity/1.2.1/velocity.ui.min.js"></script><script type="text/javascript" src="//cdn.jsdelivr.net/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script><script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script><script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script><script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script><script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script><script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script><script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script><script type="text/javascript">// Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "content.json";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });</script><script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script><script>AV.initialize("lwzyNHXlLXvtMk8pyiT1pR6E-gzGzoHsz","xPcQzNx0Vfs3XQkfHv4v4abc")</script><script>function showTime(e){var t=new AV.Query(e),c=[],u=$(".leancloud_visitors");u.each(function(){c.push($(this).attr("id").trim())}),t.containedIn("url",c),t.find().done(function(e){var t=".leancloud-visitors-count";if(0!==e.length){for(var n=0;n<e.length;n++){var o=e[n],i=o.get("url"),s=o.get("time"),r=document.getElementById(i);$(r).find(t).text(s)}for(n=0;n<c.length;n++){i=c[n],r=document.getElementById(i);var l=$(r).find(t);""==l.text()&&l.text(0)}}else u.find(t).text(0)}).fail(function(e,t){console.log("Error: "+t.code+" "+t.message)})}function addCount(i){var e=$(".leancloud_visitors"),s=e.attr("id").trim(),r=e.attr("data-flag-title").trim(),t=new AV.Query(i);t.equalTo("url",s),t.find({success:function(e){if(0<e.length){var t=e[0];t.fetchWhenSave(!0),t.increment("time"),t.save(null,{success:function(e){$(document.getElementById(s)).find(".leancloud-visitors-count").text(e.get("time"))},error:function(e,t){console.log("Failed to save Visitor num, with error message: "+t.message)}})}else{var n=new i,o=new AV.ACL;o.setPublicReadAccess(!0),o.setPublicWriteAccess(!0),n.setACL(o),n.set("title",r),n.set("url",s),n.set("time",1),n.save(null,{success:function(e){$(document.getElementById(s)).find(".leancloud-visitors-count").text(e.get("time"))},error:function(e,t){console.log("Failed to create")}})}},error:function(e){console.log("Error:"+e.code+" "+e.message)}})}$(function(){var e=AV.Object.extend("Counter");1==$(".leancloud_visitors").length?addCount(e):1<$(".post-title-link").length&&showTime(e)})</script><script>!function(){var t=document.createElement("script"),e=window.location.protocol.split(":")[0];t.src="https"===e?"https://zz.bdstatic.com/linksubmit/push.js":"http://push.zhanzhang.baidu.com/push.js";var s=document.getElementsByTagName("script")[0];s.parentNode.insertBefore(t,s)}()</script></body></html>
